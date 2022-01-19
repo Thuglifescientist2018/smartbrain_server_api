@@ -2,6 +2,7 @@
 const express =  require('express');
 const bodyParser = require('body-parser');
 const bcrypt  = require('bcrypt-nodejs')
+const cors =  require('cors')
 
 const database = {
     users: [
@@ -36,19 +37,21 @@ app.use(function(req, res, next) {
     next();
 });
 app.use(bodyParser.json())
+app.use(cors())
 app.get('/', (req, res) => {
     res.send(database.users)
 })
 app.post("/signin", (req, res) => {
     bcrypt.compare("22apples", '$2a$10$VBTSjPSUajbfvK5C.eI2iOZvCHf80ur5NONu0/CEF/s4cpm/dmnYe', function(err, res) {
-        console.log('comparison1: ', res)
+        // console.log('comparison1: ', res)
     });
     bcrypt.compare("22apples", '$2a$10$VBTSjPSUajbfvK5C.eI2iOZvCHf80ur5NONu0/CEF/s4cpm/dmnYe', function(err, res) {
-        console.log("comparison2: ", res)
+        // console.log("comparison2: ", res)
     });
+    console.log("req.body: ", req.body)
     if(req.body.email === database.users[0].email && 
         req.body.password === database.users[0].password) {
-            res.json('success');
+            res.json(database.users[0]);
         }else {
             res.status(400).json('error logging in')
         }
@@ -59,13 +62,12 @@ app.post('/register', (req, res) => {
     const {email, name, password} = req.body;
     bcrypt.hash(password, null, null, function(err, hash) {
         // Store hash in your password DB.
-        console.log(hash)
+        // console.log(hash)
     });
         database.users.push({
             id: `${id}`, 
             name: name,
             email: email,
-            password: password,
             entries: 0,
             joined: new Date()
         })
@@ -77,7 +79,7 @@ app.get('/profile/:id', (req, res) => {
     const {id} = req.params;
     let found = false;
     database.users.forEach(user => {
-        console.log(user)
+        // console.log(user)
         if(user.id === id) { 
             found = true;
             return res.json(user)
@@ -91,8 +93,9 @@ app.post('/image', (req, res) => {
     const {id} = req.body;
     let found = false;
     database.users.forEach(user => {
-        console.log(user)
+       
         if(user.id === id) { 
+            console.log(user.name, user.entries)
             found = true;
             user.entries++;
             return res.json(user.entries)
