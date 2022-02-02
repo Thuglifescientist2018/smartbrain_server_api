@@ -48,7 +48,7 @@ app.post("/signin", (req, res) => {
     bcrypt.compare("22apples", '$2a$10$VBTSjPSUajbfvK5C.eI2iOZvCHf80ur5NONu0/CEF/s4cpm/dmnYe', function(err, res) {
         // console.log("comparison2: ", res)
     });
-    console.log("req.body: ", req.body)
+    console.log("signin req.body: ", req.body)
     if(req.body.email === database.users[0].email && 
         req.body.password === database.users[0].password) {
             res.json(database.users[0]);
@@ -90,14 +90,15 @@ app.get('/profile/:id', (req, res) => {
     }
 })
 app.post('/image', (req, res) => {
+    console.log("image req body:: ",req.body)
     const {id} = req.body;
     let found = false;
     database.users.forEach(user => {
        
         if(user.id === id) { 
-            console.log(user.name, user.entries)
             found = true;
             user.entries++;
+            console.log(user.name, user.entries)
             return res.json(user.entries)
         }
     })
@@ -112,8 +113,8 @@ app.post('/image', (req, res) => {
 // // Load hash from your password DB.
 
 // bcrypt end
-
-app.listen(3000, () => {
-    console.log("server is running on port 3000")
+let port = 3000
+app.listen(port, () => {
+    console.log("server is running on port: ", port)
 })
 
